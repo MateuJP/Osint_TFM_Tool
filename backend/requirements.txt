@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+pydantic
+python-dotenv
+fastapi-cors
+httpx
+pydantic-settings
+fastapi-security
+fastapi-pagination
+fastapi-logger
+fastapi-cache
