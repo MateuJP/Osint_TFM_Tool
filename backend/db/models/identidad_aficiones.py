@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, Text, ForeignKey
+from sqlalchemy import Column, Integer, Text, ForeignKey,UniqueConstraint
 from sqlalchemy.orm import relationship
 from db.base import Base
 
-class IdentidadAficion(Base):
+class IdentidadAficiones(Base):
     __tablename__ = "identidad_aficiones"
 
     # Equivalente a: PRIMARY KEY (id_identidad, id_aficion)
@@ -22,4 +22,4 @@ class IdentidadAficion(Base):
 
     # Relaciones a los extremos
     identidad = relationship("Identidad", back_populates="identidades_aficiones", passive_deletes=True)
-    aficion   = relationship("Aficion",   back_populates="identidades_aficiones", passive_deletes=True)
+    aficion   = relationship("Aficiones",   back_populates="identidades_aficiones", passive_deletes=True)

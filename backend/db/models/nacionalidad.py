@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, UniqueConstraint
 from db.base import Base
-
+from sqlalchemy.orm import relationship
 class Nacionalidad(Base):
     __tablename__ = "nacionalidad"
     id_nacionalidad = Column(Integer, primary_key=True, index=True)
@@ -9,5 +9,6 @@ class Nacionalidad(Base):
 
     __table_args__ = (
         UniqueConstraint('nombre', name='uq_nombre_nacionalidad'),
-        UniqueConstraint('codigo', name='uq_codigo_nacionalidad')
+        UniqueConstraint('codigo', name='uq_codigo_nacionalidad'),
     )
+    identidades = relationship("Identidad", back_populates="nacionalidad")

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text, ForeignKey,DateTime, String
+from sqlalchemy import Column, Integer, Text, ForeignKey,DateTime, String,UniqueConstraint
 from sqlalchemy.orm import relationship
 from db.base import Base
 
@@ -18,6 +18,7 @@ class Accion(Base):
     id_cuenta = Column(Integer, ForeignKey('cuenta.id_cuenta'), nullable=False)
     cuenta = relationship("Cuenta", back_populates="acciones")
 
+    muestras_graficas = relationship("MuestraGrafica", back_populates="acciones")
     __table_args__ = (
-        UniqueConstraint('fecha', 'id_identidad', 'id_cuenta', name='uq_fecha_identidad_cuenta_accion')
+        UniqueConstraint('fecha', 'id_identidad', 'id_cuenta', name='uq_fecha_identidad_cuenta_accion'),
     )

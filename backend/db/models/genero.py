@@ -1,4 +1,5 @@
 from sqlalchemy import Column,Integer,String,UniqueConstraint
+from sqlalchemy.orm import relationship
 from db.base import Base
 
 class Genero(Base):
@@ -7,5 +8,6 @@ class Genero(Base):
     nombre = Column(String(100), nullable=False, unique=True)
 
     __table_args__ = (
-        UniqueConstraint('nombre', name='uq_nombre_genero')
+        UniqueConstraint('nombre', name='uq_nombre_genero'),
     )
+    identidades = relationship("Identidad", back_populates="genero")

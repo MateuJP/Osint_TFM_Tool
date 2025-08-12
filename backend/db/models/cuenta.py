@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text, ForeignKey,DateTime, String
+from sqlalchemy import Column, Integer, Text, ForeignKey,DateTime, String,UniqueConstraint
 from sqlalchemy.orm import relationship
 from db.base import Base
 
@@ -18,7 +18,8 @@ class Cuenta(Base):
     id_red_social = Column(Integer, ForeignKey('red_social.id_red_social'), nullable=False)
     red_social = relationship("RedSocial", back_populates="cuentas")
 
+    acciones = relationship("Accion", back_populates="cuenta")
     __table_args__ = (
         UniqueConstraint('nombre', name='uq_nombre_cuenta'),
-        UniqueConstraint('correo', name='uq_correo_cuenta')
+        UniqueConstraint('correo', name='uq_correo_cuenta'),
     )

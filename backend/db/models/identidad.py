@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date, DateTime, Text, ForeignKey, Index
 from sqlalchemy.orm import relationship
-from sqlachemy.sql import functions as func
+from sqlalchemy.sql import functions as func
 from db.base import Base
 
 class Identidad(Base):
@@ -34,14 +34,17 @@ class Identidad(Base):
     id_orientacion_sexual = Column(Integer, ForeignKey('orientacion_sexual.id_orientacion'), nullable=False)
     orientacion_sexual = relationship("OrientacionSexual", back_populates="identidades")
 
-    id_orientacion_politica = Column(Integer, ForeignKey('orientacion_politica.id_orientacion'), nullable=False)
+    id_orientacion_politica = Column(Integer, ForeignKey('orientacion_politica.id_orientacion_politica'), nullable=False)
     orientacion_politica = relationship("OrientacionPolitica", back_populates="identidades")
     id_nacionalidad = Column(Integer, ForeignKey('nacionalidad.id_nacionalidad'), nullable=False)
     nacionalidad = relationship("Nacionalidad", back_populates="identidades")
 
     id_pais_residencia = Column(Integer, ForeignKey('pais.id_pais'), nullable=False)
     pais= relationship("Pais", back_populates="identidades")
-   
+
+    acciones = relationship("Accion", back_populates="identidad")
+    cuentas = relationship("Cuenta", back_populates="identidad")
+    identidades_aficiones = relationship("IdentidadAficiones", back_populates="identidad", passive_deletes=True)
     __table_args__ = (
         Index('idx_nombre_apellido', 'nombre', 'apellido'),
     )

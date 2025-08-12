@@ -1,6 +1,6 @@
 from sqlalchemy import Column,Integer,String,UniqueConstraint
 from db.base import Base
-
+from sqlalchemy.orm import relationship
 class RedSocial(Base):
     __tablename__ = "red_social"
     id_red_social = Column(Integer, primary_key=True, index=True)
@@ -10,3 +10,4 @@ class RedSocial(Base):
     __table_args__ = (
         UniqueConstraint('nombre', name='uq_nombre_red_social'),
     )
+    cuentas = relationship("Cuenta", back_populates="red_social")

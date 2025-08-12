@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from db.sesion import get_db
 from db.sesion import ping_db
 from config import settings
-
+from api.v1.router import api as v1_router
 app = FastAPI(title="OSINT App API", version="1.0.0")
 
 app.add_middleware(
@@ -14,10 +14,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-@app.get("/ping")
-def ping(db: Session = Depends(get_db)):
-    ping_db()
-    return {"message": "pong"}
-@app.get("/")
-def read_root():
-    return {"status": "ok"}
+
+app.include_router(v1_router, prefix="/api/v1")
