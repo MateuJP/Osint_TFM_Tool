@@ -6,6 +6,6 @@ class Configuracion(Base):
     __tablename__ = "configuracion"
 
     nombre = Column(String(100), primary_key=True)  # uso nombre como PK
-    contrasena = Column(String(255), nullable=False)
+    password = Column(String(255), nullable=False)
     apikey = Column(String(255))
     modo = Column(String(50))

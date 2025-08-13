@@ -9,8 +9,6 @@ class Identidad(Base):
     id_identidad = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
     apellido = Column(String(100), nullable=False)
-    fecha_creacion = Column(DateTime, server_default=func.now())
-    fecha_actualizacion = Column(DateTime, server_default=func.now(), onupdate=func.now())
     edad = Column(Integer, nullable=True)
     fecha_nacimiento = Column(Date, nullable=True)
     profesion= Column(String(100), nullable=True)
@@ -18,7 +16,7 @@ class Identidad(Base):
     nombre_padre= Column(String(100), nullable=True)
     nombre_madre = Column(String(100), nullable=True)
     numero_hermanos=Column(Integer, nullable=True)
-    bibliogradia = Column(Text, nullable=True)
+    bibliografia = Column(Text, nullable=True)
     observaciones = Column(Text, nullable=True)
     avatar = Column(String(255), nullable=True)
     # Relaciones con otras tablas

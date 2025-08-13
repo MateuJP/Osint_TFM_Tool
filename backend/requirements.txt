@@ -11,3 +11,6 @@ fastapi-security
 fastapi-pagination
 fastapi-logger
 fastapi-cache
+python-dotenv
+python-jose
+passlib
