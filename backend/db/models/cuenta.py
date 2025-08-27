@@ -9,7 +9,7 @@ class Cuenta(Base):
     nombre = Column(String(100), nullable=False, unique=True)
     correo = Column(String(100), nullable=False, unique=True)
     credenciales = Column(String(255), nullable=False)
-    fecha_creacion = Column(DateTime, nullable=False)
+    fecha = Column(DateTime, nullable=False)
     url = Column(String(255), nullable=True)
 
     id_identidad = Column(Integer, ForeignKey('identidad.id_identidad'), nullable=False)

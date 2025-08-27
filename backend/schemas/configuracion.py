@@ -1,24 +1,25 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 class ConfiguracionBase(BaseModel):
     nombre: str = Field(min_length=2, max_length=100)
 
+class ConfiguracionLogin(BaseModel):
+    username: str = Field(min_length=2, max_length=100)
+    password: str = Field(min_length=8, max_length=255)
+
 class ConfiguracionCreate(ConfiguracionBase):
     password: str = Field(min_length=8, max_length=255)
-    apikey: str | None = None
-    modo: str | None = None
+    apikey: Optional[str] = None
+    modo: Optional[str] = None
 
-class ConfiguracionUpdate(ConfiguracionBase):
+class ConfiguracionUpdate(BaseModel):
+    nombre: Optional[str] = Field(None, min_length=2, max_length=100)
     password: Optional[str] = Field(None, min_length=8, max_length=255)
     apikey: Optional[str] = None
     modo: Optional[str] = None
 
 class ConfiguracionOut(ConfiguracionBase):
-    password: str
     apikey: Optional[str] = None
     modo: Optional[str] = None
-    
-    class Cofig:
-        from_attributes = True 
-
+    model_config = ConfigDict(from_attributes=True) 

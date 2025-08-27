@@ -1,40 +1,56 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from db.sesion import get_db
 from db.models import Configuracion
-from schemas.configuracion import ConfiguracionCreate, ConfiguracionOut
-from auth import get_password_hash, verify_password,create_access_token,get_current_user
+from schemas.configuracion import ConfiguracionCreate, ConfiguracionOut, ConfiguracionLogin
+from auth import get_password_hash, verify_password, create_access_token, get_current_user
 
-router = APIRouter(prefix ="/user", tags = ["Configuración"])
+router = APIRouter(prefix="/user", tags=["Auth"])
 
-@router.post("/new", response_model = ConfiguracionOut, status_code = status.HTTP_201_CREATED)
-def create_user(configuracion: ConfiguracionCreate, db: Session = Depends(get_db)):
-    
-    exist = db.query(Configuracion).filter(func.lower(Configuracion.nombre) == configuracion.nombre.lower()).first()
-    if exist:
-        raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail = "El usuario ya existe")
-    hashed_password = get_password_hash(configuracion.password)
-    new_configuracion = Configuracion(
-        nombre = configuracion.nombre.strip(),
-        password = hashed_password.strip(),
-        apikey = configuracion.apikey,
-        modo = configuracion.modo
+@router.post("/new", response_model=ConfiguracionOut, status_code=status.HTTP_201_CREATED)
+def create_user(body: ConfiguracionCreate, db: Session = Depends(get_db)):
+    exists = db.query(Configuracion).filter(
+        func.lower(Configuracion.nombre) == body.nombre.lower()
+    ).first()
+    if exists:
+        raise HTTPException(status_code=400, detail="El usuario ya existe")
+
+    hashed = get_password_hash(body.password)
+    user = Configuracion(
+        nombre=body.nombre.strip(),
+        password=hashed,
+        apikey=body.apikey,
+        modo=body.modo
     )
-    db.add(new_configuracion)
-    db.commit()
-    db.refresh(new_configuracion)
-    return new_configuracion
+    db.add(user); db.commit(); db.refresh(user)
+    return user
 
-@router.get("/login")
-def login(nombre: str, password: str, db: Session = Depends(get_db)):
-    user = db.query(Configuracion).filter(func.lower(Configuracion.nombre) == nombre.lower()).first()
-    if not user or not verify_password(password, user.password):
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail = "Credenciales no válidas")
-    
-    access_token = create_access_token(data={"sub": user.nombre})
-    return {"access_token": access_token, "token_type": "bearer"}
+# Login por JSON 
+@router.post("/login")
+def login_json(body: ConfiguracionLogin, db: Session = Depends(get_db)):
+    user = db.query(Configuracion).filter(
+        func.lower(Configuracion.nombre) == body.username.lower()
+    ).first()
+    if not user or not verify_password(body.password, user.password):
+        raise HTTPException(status_code=401, detail="Credenciales no válidas")
 
-@router.get("/me", response_model = ConfiguracionOut)
+    token = create_access_token({"sub": user.nombre})
+    return {"access_token": token, "token_type": "bearer"}
+
+# Login para el modal de Swagger (form-urlencoded)
+@router.post("/login_form")
+def login_form(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = db.query(Configuracion).filter(
+        Configuracion.nombre == form.username
+    ).first()
+    if not user or not verify_password(form.password, user.password):
+        raise HTTPException(status_code=401, detail="Credenciales no válidas")
+
+    token = create_access_token({"sub": user.nombre})
+    return {"access_token": token, "token_type": "bearer"}
+
+@router.get("/me", response_model=ConfiguracionOut)
 def read_current_user(current_user: Configuracion = Depends(get_current_user)):
     return current_user

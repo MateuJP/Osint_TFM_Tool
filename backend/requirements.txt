@@ -14,3 +14,4 @@ fastapi-cache
 python-dotenv
 python-jose
 passlib
+python-multipart
