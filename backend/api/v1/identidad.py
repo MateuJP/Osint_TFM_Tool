@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException,status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, and_
 from db.sesion import get_db
 from db.models import Identidad
@@ -45,22 +45,59 @@ def create_identidad(identidad: IdentidadCreate, db: Session = Depends(get_db)):
 
 @router.get("/list", response_model=list[IdentidadOut])
 def get_all_identities(db: Session = Depends(get_db)):
-    identidades = db.query(Identidad).all()
+    identidades = db.query(Identidad).options(
+        joinedload(Identidad.estado),
+        joinedload(Identidad.genero),
+        joinedload(Identidad.situacion_sentimental),
+        joinedload(Identidad.orientacion_sexual),
+        joinedload(Identidad.orientacion_politica),
+        joinedload(Identidad.nacionalidad),
+        joinedload(Identidad.pais)
+    ).all()
     if not identidades:
         # Opcional: puedes devolver simplemente [] en vez de error
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No se encontraron identidades"
         )
-    return identidades
+    return [
+        IdentidadOut(
+            **i.__dict__,
+            estado_nombre=i.estado.nombre if i.estado else None,
+            genero_nombre=i.genero.nombre if i.genero else None,
+            situacion_sentimental_nombre=i.situacion_sentimental.nombre if i.situacion_sentimental else None,
+            orientacion_sexual_nombre=i.orientacion_sexual.nombre if i.orientacion_sexual else None,
+            orientacion_politica_nombre=i.orientacion_politica.nombre if i.orientacion_politica else None,
+            nacionalidad_nombre=i.nacionalidad.nombre if i.nacionalidad else None,
+            pais_residencia_nombre=i.pais.nombre if i.pais else None,
+        )
+        for i in identidades
+    ]
 
 
 @router.get("/{id_identidad}",response_model=IdentidadOut)
 def get_identidad(id_identidad: int, db: Session = Depends(get_db)):
-    identidad = db.query(Identidad).filter(Identidad.id_identidad == id_identidad).first()
+    identidad = db.query(Identidad).options(
+        joinedload(Identidad.estado),
+        joinedload(Identidad.genero),
+        joinedload(Identidad.situacion_sentimental),
+        joinedload(Identidad.orientacion_sexual),
+        joinedload(Identidad.orientacion_politica),
+        joinedload(Identidad.nacionalidad),
+        joinedload(Identidad.pais)
+    ).filter(Identidad.id_identidad == id_identidad).first()
     if not identidad:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Identidad no encontrada")
-    return identidad
+    return IdentidadOut(
+        **identidad.__dict__,
+        estado_nombre=identidad.estado.nombre if identidad.estado else None,
+        genero_nombre=identidad.genero.nombre if identidad.genero else None,
+        situacion_sentimental_nombre=identidad.situacion_sentimental.nombre if identidad.situacion_sentimental else None,
+        orientacion_sexual_nombre=identidad.orientacion_sexual.nombre if identidad.orientacion_sexual else None,
+        orientacion_politica_nombre=identidad.orientacion_politica.nombre if identidad.orientacion_politica else None,
+        nacionalidad_nombre=identidad.nacionalidad.nombre if identidad.nacionalidad else None,
+        pais_residencia_nombre=identidad.pais.nombre if identidad.pais else None,
+    )
 
 @router.post("/actualizar/{id_identidad}", response_model=IdentidadOut)
 def update_identidad(id_identidad: int, identidad:IdentidadUpdate, db : Session = Depends(get_db)):

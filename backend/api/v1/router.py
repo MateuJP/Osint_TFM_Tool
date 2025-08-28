@@ -8,6 +8,7 @@ from . import cuenta
 from . import red_social
 from . import muestra_grafica
 from . import accion
+from . import estado
 
 api = APIRouter()
 
@@ -21,3 +22,4 @@ api.include_router(cuenta.router)
 api.include_router(red_social.router)
 api.include_router(muestra_grafica.router)
 api.include_router(accion.router)
+api.include_router(estado.router)
