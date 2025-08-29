@@ -1,5 +1,4 @@
-// src/context/AuthContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import api from "../api/client";
 
 interface User {
@@ -23,6 +22,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.getItem("token")
   );
 
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+      api
+        .get("/user/me")
+        .then((res) => setUser(res.data))
+        .catch(() => {
+          // token inválido → limpiar
+          localStorage.removeItem("token");
+          setToken(null);
+          setUser(null);
+        });
+    }
+  }, []);
+
   const login = async (username: string, password: string) => {
     const res = await api.post("/user/login", { username, password });
     const tokenValue = res.data?.access_token || res.data?.token;
@@ -30,7 +45,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("token", tokenValue);
     setToken(tokenValue);
 
-    // obtener usuario actual
     const me = await api.get("/user/me");
     setUser(me.data);
   };

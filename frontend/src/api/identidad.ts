@@ -11,7 +11,7 @@ export interface Identidad {
     nivel_educativo?: string | null;
     nombre_padre?: string | null;
     nombre_madre?: string | null;
-    numero_heramanos?: number | null;
+    numero_hermanos?: number | null;
     bibliografia?: string | null;
     observaciones?: string | null;
     estado_nombre?: string | null;
