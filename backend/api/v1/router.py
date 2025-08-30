@@ -13,6 +13,7 @@ from . import situacion_sentimental
 from . import orientacionSexual
 from . import orientacionPolitica
 from . import pais
+from . import nacionalidad
 
 api = APIRouter()
 
@@ -31,3 +32,4 @@ api.include_router(orientacionSexual.router)
 api.include_router(situacion_sentimental.router)
 api.include_router(orientacionPolitica.router)
 api.include_router(pais.router)
+api.include_router(nacionalidad.router)

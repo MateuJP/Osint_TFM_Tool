@@ -12,7 +12,7 @@ import {
     getOrientacionesPoliticas,
     getOrientacionesSexuales,
     getSituacionesSentimentales,
-    getNacionalidades as getPaisesResidencia,
+    getPais as getPaisesResidencia,
     type Opcion,
 } from "../api/catalogos";
 import { useForm } from "react-hook-form";
@@ -52,6 +52,7 @@ export default function IdentidadDetalle() {
         getOrientacionesSexuales().then(setOrientacionesSexuales);
         getNacionalidades().then(setNacionalidades);
         getPaisesResidencia().then(setPaisesResidencia);
+
     }, []);
 
     const onSubmit = async (data: Partial<Identidad>) => {
@@ -67,14 +68,16 @@ export default function IdentidadDetalle() {
                 id_nacionalidad: data.id_nacionalidad ? Number(data.id_nacionalidad) : null,
                 id_pais_residencia: data.id_pais_residencia ? Number(data.id_pais_residencia) : null,
             };
+            console.log("PAYLOAD", payload)
             const updated = await updateIdentidad(Number(id), payload);
+            console.log("UPDATED", updated)
             setIdentidad(updated);
             setEditMode(false);
-            setMessage({ type: "success", text: "✅ Cambios guardados correctamente" });
+            setMessage({ type: "success", text: "Cambios guardados correctamente" });
             setTimeout(() => setMessage(null), 3000);
         } catch (err) {
             console.error(err);
-            setMessage({ type: "error", text: "❌ Error al guardar los cambios" });
+            setMessage({ type: "error", text: "Error al guardar los cambios" });
             setTimeout(() => setMessage(null), 3000);
         }
     };
@@ -86,8 +89,8 @@ export default function IdentidadDetalle() {
             {message && (
                 <div
                     className={`mb-4 px-4 py-2 rounded text-sm ${message.type === "success"
-                            ? "bg-green-100 text-green-700 border border-green-300"
-                            : "bg-red-100 text-red-700 border border-red-300"
+                        ? "bg-green-100 text-green-700 border border-green-300"
+                        : "bg-red-100 text-red-700 border border-red-300"
                         }`}
                 >
                     {message.text}

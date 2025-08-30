@@ -21,14 +21,23 @@ export const getSituacionesSentimentales = async (): Promise<Opcion[]> => {
 }
 export const getOrientacionesSexuales = async (): Promise<Opcion[]> => {
     const res = await api.get("/orientacion_sexual/list");
-    return res.data.map((o: any) => ({ id: o.id_orientacion_sexual, nombre: o.nombre }));
+    return res.data.map((o: any) => ({ id: o.id_orientacion, nombre: o.nombre }));
 }
 export const getOrientacionesPoliticas = async (): Promise<Opcion[]> => {
     const res = await api.get("/orientacion_politica/list");
     return res.data.map((o: any) => ({ id: o.id_orientacion_politica, nombre: o.nombre }));
 }
 export const getNacionalidades = async (): Promise<Opcion[]> => {
-    const res = await api.get("/pais/list");
+    const res = await api.get("/nacionalidad/list");
     return res.data.map((n: any) => ({ id: n.id_nacionalidad, nombre: n.nombre }));
+}
+export const getPais = async (): Promise<Opcion[]> => {
+    const res = await api.get("/pais/list");
+    return res.data.map((n: any) => ({ id: n.id_pais, nombre: n.nombre }));
+}
+
+export const getRedesSociales = async (): Promise<Opcion[]> => {
+    const res = await api.get('/redes-sociales/lista')
+    return res.data.map((n: any) => ({ id: n.id_red_social, nombre: n.nombre }));
 }
 

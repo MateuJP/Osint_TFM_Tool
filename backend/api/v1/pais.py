@@ -6,7 +6,7 @@ from db.models import Pais
 from schemas.pais import PaisBase, PaisCreate, PaisOut
 from auth import get_current_user
 
-router = APIRouter(prefix="/pais", tags=["Nacionalidades"])
+router = APIRouter(prefix="/pais", tags=["Pais"])
 
 @router.post("/crear", response_model=PaisOut, status_code=status.HTTP_201_CREATED)
 def create_pais(pais: PaisCreate, db: Session = Depends(get_db), _user = Depends(get_current_user)):

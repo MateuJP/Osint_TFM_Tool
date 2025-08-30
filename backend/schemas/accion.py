@@ -3,6 +3,7 @@ from typing import List, Optional
 from datetime import date
 
 class AccionBase(BaseModel):
+    titulo: Optional[str] =None
     notas: Optional[str] = None
     observaciones: Optional[str] = None
     url: Optional[str] = None

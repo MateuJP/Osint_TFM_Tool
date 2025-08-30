@@ -12,6 +12,7 @@ router = APIRouter(prefix="/acciones", tags=["Acciones"])
 def create_accion(accion: AccionCreate, db: Session = Depends(get_db), _user = Depends(get_current_user)):
 
     new_accion = Accion(
+        titulo= accion.titulo,
         notas=accion.notas,
         observaciones=accion.observaciones,
         url=accion.url,
@@ -32,14 +33,21 @@ def listar_acciones_de_cuenta(id_cuenta: int, db: Session = Depends(get_db), _us
         query = query.filter(func.lower(Accion.nombre).like(f"%{q.lower()}%"))
     return query.order_by(Accion.id_accion.asc()).all()
 
+@router.get("/{id_accion}", response_model=AccionOut)
+def listar_acciones_de_cuenta(id_accion: int, db: Session = Depends(get_db), _user = Depends(get_current_user), q: str | None = Query(None, description="Buscar acciones por nombre")):
+    query = db.query(Accion).filter(Accion.id_accion == id_accion)
+    if q:
+        query = query.filter(func.lower(Accion.nombre).like(f"%{q.lower()}%"))
+    return query.first()
+
 @router.put("/actualizar/{id_accion}", response_model=AccionOut)
 def update_accion(id_accion: int, accion: AccionUpdate, db: Session = Depends(get_db), _user = Depends(get_current_user)):
     existing_accion = db.query(Accion).filter(Accion.id_accion == id_accion).first()
     if not existing_accion:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Acción no encontrada")
     
-    existing_accion.nombre = accion.nombre.strip()
-    
+    for key, value in accion.dict(exclude_unset=True).items():
+        setattr(existing_accion,key,value)    
     db.commit()
     db.refresh(existing_accion)
     return existing_accion

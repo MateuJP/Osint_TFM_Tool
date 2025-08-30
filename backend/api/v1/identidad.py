@@ -101,7 +101,15 @@ def get_identidad(id_identidad: int, db: Session = Depends(get_db)):
 
 @router.post("/actualizar/{id_identidad}", response_model=IdentidadOut)
 def update_identidad(id_identidad: int, identidad:IdentidadUpdate, db : Session = Depends(get_db)):
-    exisiting_identity = db.query(Identidad).filter(Identidad.id_identidad == id_identidad).first()
+    exisiting_identity = db.query(Identidad).options(
+        joinedload(Identidad.estado),
+        joinedload(Identidad.genero),
+        joinedload(Identidad.situacion_sentimental),
+        joinedload(Identidad.orientacion_sexual),
+        joinedload(Identidad.orientacion_politica),
+        joinedload(Identidad.nacionalidad),
+        joinedload(Identidad.pais)
+    ).filter(Identidad.id_identidad == id_identidad).first()
     if not exisiting_identity:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Identidad no encontrada")
     for key, value in identidad.dict(exclude_unset=True).items():
@@ -109,7 +117,16 @@ def update_identidad(id_identidad: int, identidad:IdentidadUpdate, db : Session 
     
     db.commit()
     db.refresh(exisiting_identity)
-    return exisiting_identity
+    return IdentidadOut(
+        **exisiting_identity.__dict__,
+        estado_nombre=exisiting_identity.estado.nombre if exisiting_identity.estado else None,
+        genero_nombre=exisiting_identity.genero.nombre if exisiting_identity.genero else None,
+        situacion_sentimental_nombre=exisiting_identity.situacion_sentimental.nombre if exisiting_identity.situacion_sentimental else None,
+        orientacion_sexual_nombre=exisiting_identity.orientacion_sexual.nombre if exisiting_identity.orientacion_sexual else None,
+        orientacion_politica_nombre=exisiting_identity.orientacion_politica.nombre if exisiting_identity.orientacion_politica else None,
+        nacionalidad_nombre=exisiting_identity.nacionalidad.nombre if exisiting_identity.nacionalidad else None,
+        pais_residencia_nombre=exisiting_identity.pais.nombre if exisiting_identity.pais else None,
+    )
 
 @router.delete("/eliminar/{id_identidad}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_identidad(id_identidad: int, db: Session = Depends(get_db)):

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, and_
 from db.sesion import get_db
 from db.models import Cuenta
@@ -35,11 +35,34 @@ def create_cuenta(cuenta: CuentaCreate, db: Session = Depends(get_db)):
     return new_cuenta
 
 @router.get("/list/{id_identidad}", response_model=list[CuentaOut])
-def listar_cuentas_de_identidad(id_identidad: int, db: Session = Depends(get_db), q: str | None = Query(None, description="Buscar cuentas por nombre")):
+def listar_cuentas_de_identidad(id_identidad: int, db: Session = Depends(get_db), q: str | None = Query(None, description="Listar cuentas de una identidad")):
     query = db.query(Cuenta).filter(Cuenta.id_identidad == id_identidad)
     if q:
         query = query.filter(func.lower(Cuenta.nombre).like(f"%{q.lower()}%"))
-    return query.order_by(Cuenta.id_cuenta.asc()).all()
+    
+    cuentas= query.order_by(Cuenta.id_cuenta.asc()).all()
+    return [
+        CuentaOut(
+            ** i.__dict__,
+            red_social_nombre = i.red_social.nombre if i.red_social else None
+        )
+        for i in cuentas
+
+    ]
+@router.get("/{id_cuenta}", response_model=list[CuentaOut])
+def listar_cuentas_de_identidad(id_cuenta: int, db: Session = Depends(get_db), q: str | None = Query(None, description="Buscar cuenta por id")):
+    query = db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta)
+    if q:
+        query = query.filter(func.lower(Cuenta.nombre).like(f"%{q.lower()}%"))
+    
+    cuenta= query.first()
+    return [
+        CuentaOut(
+            ** cuenta.__dict__,
+            red_social_nombre = cuenta.red_social.nombre if cuenta.red_social else None
+        )
+
+    ]
 
 @router.put("/actualizar/{id_cuenta}", response_model=CuentaOut)
 def update_cuenta(id_cuenta: int, cuenta: CuentaUpdate, db: Session = Depends(get_db)):

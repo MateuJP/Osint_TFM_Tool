@@ -32,13 +32,13 @@ export default function IdentityLayout() {
                 <div className="p-4 font-bold text-xl border-b">Identidad</div>
                 <nav className="flex flex-col p-4 space-y-2">
                     <NavLink
-                        to={'/'}
+                        to={'/identidades'}
                         className={({ isActive }) =>
                             `px-3 py-2 rounded hover:bg-gray-200 ${isActive ? "bg-gray-300 font-semibold" : ""
                             }`
                         }
                     >
-                        Home
+                        Identidades
                     </NavLink>
                     <NavLink
                         to={`/identidad/${id}/cuentas`}
@@ -98,12 +98,7 @@ export default function IdentityLayout() {
                 </div>
 
                 <div className="p-4 space-y-2">
-                    <button
-                        onClick={() => navigate(`/identidades/${id}/editar`)}
-                        className="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600"
-                    >
-                        Editar
-                    </button>
+
                     <button className="w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600">
                         Dormir
                     </button>

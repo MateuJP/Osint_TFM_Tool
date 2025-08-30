@@ -12,6 +12,9 @@ import Cuentas from "./pages/Cuentas";
 import Diario from "./pages/Diario";
 import Asistente from "./pages/Asistente";
 import IdentidadDetalle from "./pages/IdentidadDetalle.tsx";
+import IdentidadNueva from "./pages/IdentidadNueva.tsx";
+import AccionNueva from "./pages/AccionNueva.tsx";
+import AccionDetalle from "./pages/AccionDetalle.tsx";
 
 function PrivateRoute() {
   const { token } = useAuth();
@@ -33,6 +36,7 @@ const router = createBrowserRouter([
           { index: true, element: <Dashboard /> },
           { path: "identidades", element: <Identidades /> },
           { path: "ajustes", element: <Ajustes /> },
+          { path: "identidades/nueva", element: <IdentidadNueva /> }
         ],
       },
       {
@@ -43,8 +47,12 @@ const router = createBrowserRouter([
           { path: "cuentas", element: <Cuentas /> },
           { path: "diario", element: <Diario /> },
           { path: "asistente", element: <Asistente /> },
+          { path: "diario/nueva", element: <AccionNueva /> },
+          { path: "diario/:accionId", element: <AccionDetalle /> }
+
         ],
       },
+
     ],
   },
 

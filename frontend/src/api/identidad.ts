@@ -41,7 +41,7 @@ export const getIdentidad = async (id: number): Promise<Identidad> => {
     return response.data;
 }
 export const createIdentidad = async (data: Partial<Identidad>) => {
-    const res = await api.post('(identidad/crear', data);
+    const res = await api.post('/identidad/crear', data);
     return res.data;
 }
 export const updateIdentidad = async (id: number, data: Partial<Identidad>) => {

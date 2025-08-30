@@ -20,5 +20,7 @@ class CuentaOut(CuentaBase):
     url: str | None = None
     id_red_social: int | None = None
     id_identidad: int
+    red_social_nombre : str | None = None
+    credenciales : str
     class Config:
         from_attributes = True  

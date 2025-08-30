@@ -6,6 +6,7 @@ class Accion(Base):
     __tablename__ = "accion"
 
     id_accion = Column(Integer, primary_key=True, index=True)
+    titulo = Column(String(255), nullable=True)
     fecha = Column(DateTime, nullable=False)
     notas = Column(Text, nullable=True)
     observaciones = Column(Text, nullable=True)
