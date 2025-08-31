@@ -53,7 +53,7 @@ def get_all_identities(db: Session = Depends(get_db)):
         joinedload(Identidad.orientacion_politica),
         joinedload(Identidad.nacionalidad),
         joinedload(Identidad.pais)
-    ).all()
+    ).order_by(Identidad.id_identidad).all()
     if not identidades:
         # Opcional: puedes devolver simplemente [] en vez de error
         raise HTTPException(

@@ -34,7 +34,7 @@ export default function Cuentas() {
       reset();
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      setMessage(`❌ ${err.message}`);
+      setMessage(`${err.message}`);
     }
   };
 

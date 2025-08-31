@@ -41,3 +41,7 @@ export const getRedesSociales = async (): Promise<Opcion[]> => {
     return res.data.map((n: any) => ({ id: n.id_red_social, nombre: n.nombre }));
 }
 
+export const getAficiones = async (): Promise<Opcion[]> => {
+    const res = await api.get('/aficiones/list');
+    return res.data.map((n: any) => ({ id: n.id_aficion, nombre: n.nombre }))
+}

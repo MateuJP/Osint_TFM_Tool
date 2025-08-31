@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { createIdentidad, type Identidad } from "../api/identidad";
+import { getAficiones } from "../api/catalogos";
+import { getAficionesByIdentidad, AddAficionesToIdentidad } from "../api/IdentidadAficiones";
 import {
     getEstados,
     getGeneros,
@@ -24,7 +26,9 @@ export default function IdentidadNueva() {
     const [orientacionesPoliticas, setOrientacionesPoliticas] = useState<Opcion[]>([]);
     const [nacionalidades, setNacionalidades] = useState<Opcion[]>([]);
     const [paises, setPaises] = useState<Opcion[]>([]);
-    const [message, setMessage] = useState<string | null>(null);
+    const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+    const [aficionesDisponibles, setAficionesDisponibles] = useState<Opcion[]>([]);
+    const [aficionesSeleccionadas, setAficionesSeleccionadas] = useState<number[]>([]);
 
     useEffect(() => {
         getEstados().then(setEstados);
@@ -34,6 +38,7 @@ export default function IdentidadNueva() {
         getOrientacionesPoliticas().then(setOrientacionesPoliticas);
         getNacionalidades().then(setNacionalidades);
         getPaisesResidencia().then(setPaises);
+        getAficiones().then(setAficionesDisponibles)
     }, []);
 
     const onSubmit = async (data: Partial<Identidad>) => {
@@ -49,15 +54,20 @@ export default function IdentidadNueva() {
                 id_pais_residencia: data.id_pais_residencia ? Number(data.id_pais_residencia) : null,
             };
             const nueva = await createIdentidad(payload);
-            setMessage("✅ Identidad creada correctamente");
+
+            // VINCULAMOS LAS AFICIONES A LA IDENTIDAD SELECCIONADA
+            for (const id_aficion of aficionesSeleccionadas) {
+                await AddAficionesToIdentidad({ id_identidad: nueva.id_identidad, id_aficion: id_aficion })
+            }
+            setMessage({ type: "success", text: "Identidad creada correctamente" });
             reset();
             setTimeout(() => {
                 setMessage(null);
                 navigate(`/identidad/${nueva.id_identidad}`);
             }, 1500);
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            setMessage("❌ Error al crear la identidad");
+            setMessage({ type: "error", text: `Error: ${err.message}` });
         }
     };
 
@@ -66,7 +76,14 @@ export default function IdentidadNueva() {
             <h1 className="text-2xl font-bold mb-4">Nueva Identidad</h1>
 
             {message && (
-                <div className="mb-4 text-sm p-2 rounded border bg-gray-100">{message}</div>
+                <div
+                    className={`mb-4 px-4 py-2 rounded text-sm ${message.type === "success"
+                        ? "bg-green-100 text-green-700 border border-green-300"
+                        : "bg-red-100 text-red-700 border border-red-300"
+                        }`}
+                >
+                    {message.text}
+                </div>
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -139,6 +156,28 @@ export default function IdentidadNueva() {
                             <option key={p.id} value={p.id}>{p.nombre}</option>
                         ))}
                     </select>
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold mb-2">Aficiones</label>
+                    <div className="grid grid-cols-2 gap-2">
+                        {aficionesDisponibles.map((a) => (
+                            <label key={a.id} className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    value={a.id}
+                                    checked={aficionesSeleccionadas.includes(a.id)}
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            setAficionesSeleccionadas([...aficionesSeleccionadas, a.id]);
+                                        } else {
+                                            setAficionesSeleccionadas(aficionesSeleccionadas.filter((x) => x !== a.id));
+                                        }
+                                    }}
+                                />
+                                {a.nombre}
+                            </label>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Notas */}

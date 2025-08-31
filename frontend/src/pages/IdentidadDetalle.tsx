@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { getAficiones } from "../api/catalogos";
+import { getAficionesByIdentidad, AddAficionesToIdentidad, RemoveAficionesByIdentidad } from "../api/IdentidadAficiones";
 import {
     getIdentidad,
     updateIdentidad,
@@ -30,16 +32,22 @@ export default function IdentidadDetalle() {
     const [orientacionesSexuales, setOrientacionesSexuales] = useState<Opcion[]>([]);
     const [nacionalidades, setNacionalidades] = useState<Opcion[]>([]);
     const [paisesResidencia, setPaisesResidencia] = useState<Opcion[]>([]);
-
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-
     const { register, handleSubmit, reset } = useForm<Partial<Identidad>>();
+    const [aficionesDisponibles, setAficionesDisponibles] = useState<Opcion[]>([]);
+    const [aficionesSeleccionadas, setAficionesSeleccionadas] = useState<number[]>([]);
+    const [aficionesIniciales, setAficionesIniciales] = useState<number[]>([]);
 
     useEffect(() => {
         if (id) {
             getIdentidad(Number(id)).then((data) => {
                 setIdentidad(data);
                 reset(data);
+            });
+            getAficionesByIdentidad(Number(id)).then((afs) => {
+                const ids = afs.map((a) => a.id_aficion);
+                setAficionesSeleccionadas(ids);
+                setAficionesIniciales(ids);
             });
         }
     }, [id, reset]);
@@ -52,6 +60,7 @@ export default function IdentidadDetalle() {
         getOrientacionesSexuales().then(setOrientacionesSexuales);
         getNacionalidades().then(setNacionalidades);
         getPaisesResidencia().then(setPaisesResidencia);
+        getAficiones().then(setAficionesDisponibles)
 
     }, []);
 
@@ -68,16 +77,33 @@ export default function IdentidadDetalle() {
                 id_nacionalidad: data.id_nacionalidad ? Number(data.id_nacionalidad) : null,
                 id_pais_residencia: data.id_pais_residencia ? Number(data.id_pais_residencia) : null,
             };
-            console.log("PAYLOAD", payload)
             const updated = await updateIdentidad(Number(id), payload);
-            console.log("UPDATED", updated)
             setIdentidad(updated);
-            setEditMode(false);
+
+            const aficiones_add = aficionesSeleccionadas.filter((x) => !aficionesIniciales.includes(x))
+            const aficiones_remove = aficionesIniciales.filter((x) => !aficionesSeleccionadas.includes(x))
+            // VINCULAMOS LAS AFICIONES A LA IDENTIDAD SELECCIONADA
+            console.log("AÑADIR", aficiones_add)
+
+            console.log("ELIMINAR", aficiones_remove)
+            for (const id_aficion of aficiones_add) {
+
+                await AddAficionesToIdentidad({ id_identidad: Number(id), id_aficion: id_aficion })
+            }
+            for (const id_aficione of aficiones_remove) {
+                await RemoveAficionesByIdentidad(Number(id), id_aficione)
+            }
+
+            getAficionesByIdentidad(Number(id)).then((afs) => {
+                const ids = afs.map((a) => a.id_aficion);
+                setAficionesSeleccionadas(ids);
+                setAficionesIniciales(ids);
+            });
             setMessage({ type: "success", text: "Cambios guardados correctamente" });
             setTimeout(() => setMessage(null), 3000);
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            setMessage({ type: "error", text: "Error al guardar los cambios" });
+            setMessage({ type: "error", text: `Error al guardar los cambios : ${err.message}` });
             setTimeout(() => setMessage(null), 3000);
         }
     };
@@ -137,6 +163,20 @@ export default function IdentidadDetalle() {
                         <h2 className="text-lg font-semibold border-b pb-1 mb-2">Notas</h2>
                         <p><strong>Bibliografía:</strong> {identidad.bibliografia ?? "—"}</p>
                         <p><strong>Observaciones:</strong> {identidad.observaciones ?? "—"}</p>
+                    </div>
+                    {/* Aficiones */}
+                    <div className="mb-4">
+                        <h2 className="text-lg font-semibold border-b pb-1 mb-2">Aficiones</h2>
+                        {aficionesSeleccionadas.length > 0 ? (
+                            <ul className="list-disc pl-6">
+                                {aficionesSeleccionadas.map((idAfi) => {
+                                    const afi = aficionesDisponibles.find((a) => a.id === idAfi);
+                                    return afi ? <li key={afi.id}>{afi.nombre}</li> : null;
+                                })}
+                            </ul>
+                        ) : (
+                            <p className="text-gray-500">—</p>
+                        )}
                     </div>
 
                     <button
@@ -248,6 +288,28 @@ export default function IdentidadDetalle() {
                         <h3 className="text-md font-semibold mb-2">Notas</h3>
                         <textarea {...register("bibliografia")} placeholder="Bibliografía" className="border rounded px-3 py-2 w-full" />
                         <textarea {...register("observaciones")} placeholder="Observaciones" className="border rounded px-3 py-2 w-full" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold mb-2">Aficiones</label>
+                        <div className="grid grid-cols-2 gap-2">
+                            {aficionesDisponibles.map((a) => (
+                                <label key={a.id} className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        value={a.id}
+                                        checked={aficionesSeleccionadas.includes(a.id)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setAficionesSeleccionadas([...aficionesSeleccionadas, a.id]);
+                                            } else {
+                                                setAficionesSeleccionadas(aficionesSeleccionadas.filter((x) => x !== a.id));
+                                            }
+                                        }}
+                                    />
+                                    {a.nombre}
+                                </label>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="flex gap-2">
