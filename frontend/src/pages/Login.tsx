@@ -72,8 +72,8 @@ export default function Login() {
         </form>
 
         <p className="mt-6 text-sm text-gray-500">
-          ¿No tienes cuenta?{" "}
-          <a href="#" className="text-blue-600 font-medium hover:underline">
+          ¿Aún no has creado tu cuenta?{" "}
+          <a href="/registro-inicial" className="text-blue-600 font-medium hover:underline">
             Regístrate aquí
           </a>
         </p>

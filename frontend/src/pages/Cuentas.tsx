@@ -30,7 +30,7 @@ export default function Cuentas() {
     try {
       const nueva = await createCuenta({ ...data, id_identidad: Number(id) });
       setCuentas((prev) => [...prev, nueva]);
-      setMessage("✅ Cuenta creada");
+      setMessage("Cuenta creada");
       reset();
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
@@ -57,7 +57,7 @@ export default function Cuentas() {
     try {
       await deleteCuenta(id_cuenta);
       setCuentas((prev) => prev.filter((c) => c.id_cuenta !== id_cuenta));
-      setMessage("🗑️ Cuenta eliminada");
+      setMessage("Cuenta eliminada");
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
       setMessage(`${err.message}`);
@@ -74,7 +74,7 @@ export default function Cuentas() {
   const copyCredenciales = (texto: string | undefined) => {
     if (!texto) return;
     navigator.clipboard.writeText(texto);
-    setMessage("📋 Copiado al portapapeles");
+    setMessage("Copiado al portapapeles");
     setTimeout(() => setMessage(null), 2000);
   };
 

@@ -15,6 +15,7 @@ import IdentidadDetalle from "./pages/IdentidadDetalle.tsx";
 import IdentidadNueva from "./pages/IdentidadNueva.tsx";
 import AccionNueva from "./pages/AccionNueva.tsx";
 import AccionDetalle from "./pages/AccionDetalle.tsx";
+import RegistroInicial from "./pages/NuevoUsuario.tsx";
 
 function PrivateRoute() {
   const { token } = useAuth();
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: '/registro-inicial',
+    element: <RegistroInicial />
   },
   {
     element: <PrivateRoute />,

@@ -13,7 +13,7 @@ class ConfiguracionCreate(ConfiguracionBase):
     apikey: Optional[str] = None
     modo: Optional[str] = None
 
-class ConfiguracionUpdate(BaseModel):
+class ConfiguracionUpdate(ConfiguracionBase):
     nombre: Optional[str] = Field(None, min_length=2, max_length=100)
     password: Optional[str] = Field(None, min_length=8, max_length=255)
     apikey: Optional[str] = None
