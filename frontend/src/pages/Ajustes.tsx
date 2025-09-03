@@ -82,9 +82,13 @@ export default function Ajustes() {
         <div>
           <label className="block text-sm font-medium mb-1">API Key</label>
           <div className="flex items-center gap-2 border rounded px-3 py-2">
-            <span className="flex-1">
-              {showApiKey ? apikey || "—" : "••••••••"}
-            </span>
+            <input
+              type={showApiKey ? "text" : "password"}
+              value={apikey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="Introduce tu API Key"
+              className="flex-1 outline-none"
+            />
             {apikey && (
               <>
                 <button
@@ -105,6 +109,7 @@ export default function Ajustes() {
             )}
           </div>
         </div>
+
 
         <button
           type="submit"

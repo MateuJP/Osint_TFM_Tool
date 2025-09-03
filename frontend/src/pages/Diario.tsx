@@ -91,7 +91,7 @@ export default function Diario() {
                 </h3>
                 <p className="text-sm text-gray-500">{a.fecha}</p>
                 <p className="text-sm text-gray-700 mt-2">
-                  Cuenta: {cuenta?.nombre || "—"}
+                  Cuenta: {cuenta?.nombre || "—"} - {cuenta?.red_social_nombre || ''}
                 </p>
               </div>
               <div className="flex gap-2 mt-4">

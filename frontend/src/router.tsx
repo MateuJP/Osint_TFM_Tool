@@ -41,7 +41,8 @@ const router = createBrowserRouter([
           { index: true, element: <Dashboard /> },
           { path: "identidades", element: <Identidades /> },
           { path: "ajustes", element: <Ajustes /> },
-          { path: "identidades/nueva", element: <IdentidadNueva /> }
+          { path: "identidades/nueva", element: <IdentidadNueva /> },
+          { path: "asistente", element: <Asistente /> }
         ],
       },
       {

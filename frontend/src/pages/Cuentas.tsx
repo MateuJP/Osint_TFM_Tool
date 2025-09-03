@@ -15,7 +15,7 @@ export default function Cuentas() {
   const [cuentas, setCuentas] = useState<Cuenta[]>([]);
   const [redes, setRedes] = useState<Opcion[]>([]);
   const [editCuenta, setEditCuenta] = useState<Cuenta | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [showCredenciales, setShowCredenciales] = useState<{ [key: number]: boolean }>({});
 
   const { register, handleSubmit, reset } = useForm<Partial<Cuenta>>();
@@ -30,11 +30,11 @@ export default function Cuentas() {
     try {
       const nueva = await createCuenta({ ...data, id_identidad: Number(id) });
       setCuentas((prev) => [...prev, nueva]);
-      setMessage("Cuenta creada");
+      setMessage({ type: "success", text: "Cuenta creada con éxito" })
       reset();
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      setMessage(`${err.message}`);
+      setMessage({ type: "error", text: `Error: ${err.message}` });
     }
   };
 
@@ -45,11 +45,11 @@ export default function Cuentas() {
       setCuentas((prev) =>
         prev.map((c) => (c.id_cuenta === updated.id_cuenta ? updated : c))
       );
-      setMessage("Cuenta actualizada");
+      setMessage({ type: "success", text: "Cuenta actualizada correctamente" });
       setEditCuenta(null);
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      setMessage(`${err.message}`);
+      setMessage({ type: "error", text: `Error : ${err.message}` });
     }
   };
 
@@ -57,10 +57,10 @@ export default function Cuentas() {
     try {
       await deleteCuenta(id_cuenta);
       setCuentas((prev) => prev.filter((c) => c.id_cuenta !== id_cuenta));
-      setMessage("Cuenta eliminada");
+      setMessage({ type: "success", text: "Cuenta eliminada correctamente" });
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      setMessage(`${err.message}`);
+      setMessage({ type: "error", text: `Error: ${err.message}` });
     }
   };
 
@@ -74,7 +74,7 @@ export default function Cuentas() {
   const copyCredenciales = (texto: string | undefined) => {
     if (!texto) return;
     navigator.clipboard.writeText(texto);
-    setMessage("Copiado al portapapeles");
+    setMessage({ type: "success", text: "Copiado al portapapeles" });
     setTimeout(() => setMessage(null), 2000);
   };
 
@@ -83,8 +83,13 @@ export default function Cuentas() {
       <h1 className="text-2xl font-bold mb-6">Cuentas de la Identidad</h1>
 
       {message && (
-        <div className="mb-4 p-3 rounded text-sm font-medium bg-gray-100 border">
-          {message}
+        <div
+          className={`mb-4 px-4 py-2 rounded text-sm ${message.type === "success"
+            ? "bg-green-100 text-green-700 border border-green-300"
+            : "bg-red-100 text-red-700 border border-red-300"
+            }`}
+        >
+          {message.text}
         </div>
       )}
 
