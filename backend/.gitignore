@@ -1,1 +1,6 @@
 .env
+# Ignorar todo dentro de uploads/media
+uploads/media/*
+
+# Pero mantener la carpeta vacía
+!uploads/muestras_graficas/.gitkeep
