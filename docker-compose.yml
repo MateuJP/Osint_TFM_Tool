@@ -2,10 +2,8 @@ version: "3.9"
 services:
   db:
     image: postgres:16
-    environment:
-      POSTGRES_DB: osint
-      POSTGRES_USER: osint
-      POSTGRES_PASSWORD: osint
+    env_file:
+      - .env
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
@@ -13,9 +11,8 @@ services:
 
   api:
     build: ./backend
-    environment:
-      - DATABASE_URL=postgresql://osint:osint@db:5432/osint
-      - CORS_ORIGIN=*
+    env_file:
+      - .env
     volumes:
       - ./backend:/app
     depends_on:

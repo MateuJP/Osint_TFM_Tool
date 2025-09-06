@@ -39,7 +39,7 @@ Recibirás como entrada un objetivo claro, y deberás devolver una identidad com
   "observaciones": "str (debe incluir la situación sentimental, orientación política, historia personal, motivaciones, rasgos de personalidad, estilo de comunicación, ideologías, debilidades, y cualquier otro dato útil para que el analista pueda interpretar y utilizar esta identidad como cobertura operativa)"
 }}
 
-⚠️ Instrucciones importantes:
+Instrucciones importantes:
 - La salida debe ser EXCLUSIVAMENTE un objeto JSON válido.
 - No incluyas explicaciones, comentarios, ni bloques de código (```).
 - Todos los campos son obligatorios.

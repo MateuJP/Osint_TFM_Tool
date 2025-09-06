@@ -174,7 +174,7 @@ export default function Cuentas() {
         <div className="grid grid-cols-2 gap-4">
           <input {...register("nombre")} placeholder="Nombre" className="border rounded px-3 py-2 w-full" />
           <input {...register("correo")} placeholder="Correo" className="border rounded px-3 py-2 w-full" />
-          <input {...register("credenciales")} placeholder="Credenciales" className="border rounded px-3 py-2 w-full" />
+          <input {...register("credenciales")} type="password" placeholder="Credenciales" className="border rounded px-3 py-2 w-full" />
           <input {...register("url")} placeholder="URL" className="border rounded px-3 py-2 w-full" />
           <select {...register("id_red_social")} className="border rounded px-3 py-2 w-full col-span-2">
             <option value="">Seleccionar red social</option>

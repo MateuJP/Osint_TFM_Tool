@@ -24,3 +24,5 @@ docker-compose.yml
 *.njsproj
 *.sln
 *.sw?
+
+.env
