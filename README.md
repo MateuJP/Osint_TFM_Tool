@@ -197,7 +197,7 @@ backend/
 └── main.py               # Punto de entrada de la aplicación
 ```
 
-### 📘 Estructura general
+### Estructura general
 
 - **`api/v1/`**  
   Contiene las rutas principales del proyecto, organizadas por entidad.  
