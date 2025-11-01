@@ -48,6 +48,17 @@ export const updateIdentidad = async (id: number, data: Partial<Identidad>) => {
     const res = await api.post(`/identidad/actualizar/${id}`, data);
     return res.data;
 }
+
+export const uploadAvatar = async (id: number, file: File) => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    const res = await api.post(`/identidad/${id}/subir_avatar`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return res.data;
+}
 export const deleteIdentidad = async (id: number) => {
     await api.delete(`/identidad/eliminar/${id}`);
 }

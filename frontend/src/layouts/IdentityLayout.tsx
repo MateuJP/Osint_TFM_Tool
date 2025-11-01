@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getIdentidad, deleteIdentidad } from "../api/identidad";
+import { useEffect, useState, useRef } from "react";
+import { getIdentidad, deleteIdentidad, uploadAvatar } from "../api/identidad";
 import type { Identidad } from "../api/identidad";
 
 export default function IdentityLayout() {
@@ -18,6 +18,23 @@ export default function IdentityLayout() {
         if (id && confirm("¿Seguro que quieres eliminar esta identidad?")) {
             await deleteIdentidad(Number(id));
             navigate("/identidades");
+        }
+    };
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [uploading, setUploading] = useState(false);
+
+    const handleUploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!id || !event.target.files || !event.target.files[0]) return;
+        const file = event.target.files[0];
+        try {
+            setUploading(true);
+            await uploadAvatar(Number(id), file);
+            const updatedIdentidad = await getIdentidad(Number(id));
+            setIdentidad(updatedIdentidad);
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
         }
     };
 
@@ -80,12 +97,11 @@ export default function IdentityLayout() {
                 <div className="p-4 flex flex-col items-center text-center border-b">
                     <img
                         src={
-                            identidad.avatar ||
-                            "https://ui-avatars.com/api/?name=" +
-                            identidad.nombre +
-                            "+" +
-                            identidad.apellido
+                            identidad.avatar
+                                ? `http://localhost:8000/api/v1${identidad.avatar}`
+                                : `https://ui-avatars.com/api/?name=${identidad.nombre}+${identidad.apellido}`
                         }
+
                         alt="avatar"
                         className="w-24 h-24 rounded-full mb-3"
                     />
@@ -95,13 +111,25 @@ export default function IdentityLayout() {
                     {identidad.edad && (
                         <p className="text-sm text-gray-600">{identidad.edad} años</p>
                     )}
+
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleUploadAvatar}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="mt-3 px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                        disabled={uploading}
+                    >
+                        {uploading ? "Subiendo..." : "Cambiar avatar"}
+                    </button>
                 </div>
 
                 <div className="p-4 space-y-2">
-
-                    <button className="w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600">
-                        Dormir
-                    </button>
                     <button
                         onClick={handleDelete}
                         className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700"

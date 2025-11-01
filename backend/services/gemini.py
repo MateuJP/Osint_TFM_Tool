@@ -12,7 +12,7 @@ class AIGenerator:
             if not self.api_key:
                 raise ValueError("Gemini API Key es necesaria")
             genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel("gemini-1.5-flash")
+            self.model = genai.GenerativeModel("gemini-2.5-flash")
 
     def generar_identidad(self, objetivo: str) -> dict:
         hoy = date.today().strftime("%Y-%m-%d")

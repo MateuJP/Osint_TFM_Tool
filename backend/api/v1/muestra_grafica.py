@@ -9,6 +9,8 @@ from auth import get_current_user
 import os
 router = APIRouter(prefix="/muestras_graficas", tags=["Muestras Gráficas"])
 UPLOAD_DIR = "uploads/muestras_graficas"
+AVATAR_DIR = "uploads/avatars"
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
@@ -93,6 +95,12 @@ def delete_muestra_grafica(id_muestra: int, db: Session = Depends(get_db), _user
 @router.get("/archivo/{filename}")
 def ger_mustra_archivo(filename:str):
     filepath = os.path.join(UPLOAD_DIR,filename)
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail= "Archivo No encontrado")
+    return FileResponse(filepath)
+@router.get("/avatar/{filename}")
+def ger_mustra_archivo(filename:str):
+    filepath = os.path.join(AVATAR_DIR,filename)
     if not os.path.exists(filepath):
         raise HTTPException(status_code=404, detail= "Archivo No encontrado")
     return FileResponse(filepath)

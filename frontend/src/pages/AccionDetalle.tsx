@@ -124,13 +124,18 @@ export default function AccionDetalle() {
                         <div key={m.id_muestra} className="flex justify-between items-center border p-2 mb-2">
                             <div className="flex flex-col">
                                 <span>{m.titulo} ({m.formato})</span>
-                                {m.url && (m.url.endsWith(".jpg") || m.url.endsWith(".png")) && (
+                                {m.url && (m.url.endsWith(".jpg") || m.url.endsWith(".png") || m.url.endsWith("jpeg") || m.url.endsWith("webp")) && (
                                     <img
-                                        src={`http://localhost:8000/api/v1${m.url}`}
+                                        src={m.url.startsWith('http') ? m.url : `http://localhost:8000/api/v1${m.url}`}
                                         alt="preview"
                                         className="mt-1 max-h-24 rounded border cursor-pointer"
-                                        onClick={() => setPreviewUrl(`http://localhost:8000/api/v1${m.url}`)}
+                                        onClick={() =>
+                                            setPreviewUrl(
+                                                m.url.startsWith('http') ? m.url : `http://localhost:8000/api/v1${m.url}`
+                                            )
+                                        }
                                     />
+
                                 )}
                             </div>
                             <button
@@ -152,7 +157,6 @@ export default function AccionDetalle() {
                     <h2 className="text-lg font-semibold mb-3">Añadir nuevas muestras</h2>
                     {newMuestras.map((m, idx) => (
                         <div key={idx} className="border rounded p-3 mb-3 bg-gray-50 space-y-2 relative">
-                            {/* Botón para eliminar la muestra temporal */}
                             <button
                                 type="button"
                                 onClick={() => setNewMuestras((prev) => prev.filter((_, i) => i !== idx))}
@@ -200,12 +204,12 @@ export default function AccionDetalle() {
                                         placeholder="https://ejemplo.com/imagen.png"
                                         className="border rounded px-3 py-2 w-full"
                                     />
-                                    {m.url && (m.url.endsWith(".jpg") || m.url.endsWith(".png")) && (
+                                    {m.url && (m.url.endsWith(".jpg") || m.url.endsWith(".png") || m.url.endsWith("jpeg")) && (
                                         <img
                                             src={m.url}
                                             alt="preview"
                                             className="mt-2 max-h-40 rounded border cursor-pointer"
-                                            onClick={() => setPreviewUrl(`http://localhost:8000/api/v1${m.url}`)}
+                                            onClick={() => setPreviewUrl(`${m.url}`)}
                                         />
                                     )}
                                 </div>

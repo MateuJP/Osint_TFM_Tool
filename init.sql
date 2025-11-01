@@ -109,6 +109,7 @@ CREATE TABLE cuenta (
 -- Tabla ACCION
 CREATE TABLE accion (
     id_accion SERIAL PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     notas TEXT,
     observaciones TEXT,

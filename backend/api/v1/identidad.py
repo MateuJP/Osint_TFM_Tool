@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException,status
+from fastapi import APIRouter, Depends, HTTPException,status,UploadFile, File
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, and_
 from db.sesion import get_db
 from db.models import Identidad
 from schemas.identidad import IdentidadCreate, IdentidadOut,IdentidadUpdate
+import os
 
 router = APIRouter(prefix="/identidad", tags=["Identidad"])
+AVATAR_DIR = "uploads/avatars"
+os.makedirs(AVATAR_DIR, exist_ok=True)
 
 @router.post("/crear", response_model=IdentidadOut, status_code=status.HTTP_201_CREATED)
 def create_identidad(identidad: IdentidadCreate, db: Session = Depends(get_db)):
@@ -127,6 +130,21 @@ def update_identidad(id_identidad: int, identidad:IdentidadUpdate, db : Session 
         nacionalidad_nombre=exisiting_identity.nacionalidad.nombre if exisiting_identity.nacionalidad else None,
         pais_residencia_nombre=exisiting_identity.pais.nombre if exisiting_identity.pais else None,
     )
+
+@router.post("/{id_identidad}/subir_avatar", response_model=IdentidadOut)
+def subir_avatar(id_identidad: int, avatar: UploadFile, db: Session = Depends(get_db)):
+    identidad = db.query(Identidad).filter(Identidad.id_identidad == id_identidad).first()
+    if not identidad:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Identidad no encontrada")
+    file_ext = os.path.splitext(avatar.filename)[1]
+    filename = f"identidad_{id_identidad}{file_ext}"
+    filepath = os.path.join(AVATAR_DIR, filename)
+    with open(filepath, "wb") as buffer:
+        buffer.write(avatar.file.read())
+    identidad.avatar = f"/muestras_graficas/avatar/{filename}"
+    db.commit()
+    db.refresh(identidad)
+    return identidad
 
 @router.delete("/eliminar/{id_identidad}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_identidad(id_identidad: int, db: Session = Depends(get_db)):
