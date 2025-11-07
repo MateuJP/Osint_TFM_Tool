@@ -55,7 +55,7 @@ CORS_ORIGIN=http://localhost:3000
 ### **3. Construir y ejecutar los contenedores**
 
 ```bash
-docker compose up --build
+docker-compose up --build
 ```
 
 Esto levantará **3 contenedores**:
